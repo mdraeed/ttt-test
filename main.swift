@@ -152,7 +152,6 @@ func playGame() {
             running = false
         }
     }
-    
 }
-playGame()
 
+playGame()
