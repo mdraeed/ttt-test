@@ -215,7 +215,6 @@ func playGame() {
         }
         }
     }
-    
 }
-playGame()
 
+playGame()
