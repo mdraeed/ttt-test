@@ -6,6 +6,14 @@ func displayBoard(board: [String]) {
     print("---------")
     print("\(board[6]) | \(board[7]) | \(board[8])")
     print()
+
+    print()
+    print(" 1 | 2 | 3")
+    print("------------")
+    print(" 4 | 5 | 6 ")
+    print("------------")
+    print(" 7 | 8 | 9 ")
+    print()
 }
 func isBoardEmpty(board: [String]) -> Bool {
     for i in 0 ..< board.count {
@@ -103,6 +111,7 @@ func playGame() {
                             " ", " ", " "]
     var turn : Bool = false
     var running : Bool = true
+    var multiplayer : Bool = false
     print("********* [ WELCOME TO TIC-TAC-TOE GAME ] *********")
     print("*                                                 *")
     print("*          INFO: HUMAN (X), COMPUTER (O)          *")
@@ -116,10 +125,17 @@ func playGame() {
     print("*                   7 | 8 | 9                     *")
     print("*                                                 *")
     print("***************************************************")
+    print("[S]ingleplayer or [M]ultiplayer?")
+    let multiplayerResponse = readLine()!
+    if multiplayerResponse ~= "M" {
+        multiplayer = true
+    } else {
+        multiplayer = false
+    }
     
-    while (isBoardEmpty(board: board) == true) && (running == true) {
+    while (isBoardEmpty(board: board) == true) && (running == true) && (multiplayer == false) {
         if turn == false {
-            print("Please select a move from 1-9: ")
+            print("Please select a move from 1-9:")
             let position = readLine()!
             if 1...9 ~= Int(position)! {
                 if board[Int(position)! - 1] == " " {
@@ -143,6 +159,52 @@ func playGame() {
             playAgain()
             running = false
         } else if checkWin(board: board, letter: "O") == true {
+            if multiplayer == false {
+                print("Unfortunately, the AI won. Maybe next time 😏")
+            } else {
+                print("Congratulations! Player O won!")
+            }
+            playAgain()
+            running = false
+        } else if checkWin(board: board, letter: "X") == false && checkWin(board: board, letter: "O") == false && isBoardEmpty(board: board) == false {
+            print("It's a tie! Maybe next time 😏")
+            playAgain()
+            running = false
+        }
+    }
+    while (isBoardEmpty(board: board) == true) && (running == true) && (multiplayer == true) {
+        if turn == false {
+            print("Please select a move from 1-9:")
+            let position = readLine()!
+            if 1...9 ~= Int(position)! {
+                if board[Int(position)! - 1] == " " {
+                    board[Int(position)! - 1] = "X"
+                    turn = true
+                } else {
+                    print("That spot has already been taken! Please select an open spot.")
+                }
+            }
+            displayBoard(board: board)
+        } else {
+            print("Please select a move from 1-9:")
+            let position = readLine()!
+            if 1...9 ~= Int(position)! {
+                if board[Int(position)! - 1] == " " {
+                    board[Int(position)! - 1] = "O"
+                    turn = false
+                } else {
+                    print("That spot has already been taken! Please select an open spot.")
+                }
+            1
+        }
+        
+        displayBoard(board: board)
+        
+        if checkWin(board: board, letter: "X") == true {
+            print("Congratulations! You won!")
+            playAgain()
+            running = false
+        } else if checkWin(board: board, letter: "O") == true {
             print("Unfortunately, the AI won. Maybe next time 😏")
             playAgain()
             running = false
@@ -150,6 +212,7 @@ func playGame() {
             print("It's a tie! Maybe next time 😏")
             playAgain()
             running = false
+        }
         }
     }
     
