@@ -123,12 +123,14 @@ func playGame() {
     print("*                                                 *")
     print("***************************************************")
     print("[S]ingleplayer or [M]ultiplayer?")
-
+    
     let multiplayerResponse = readLine()!.uppercased()
-    if multiplayerResponse ~= "M" {
+    if multiplayerResponse == "M" {
         multiplayer = true
-    } else {
+    } else if multiplayerResponse == "S" {
         multiplayer = false
+    } else {
+        playGame()
     }
     
     while (isBoardEmpty(board: board) == true) && (running == true) && (multiplayer == false) {
@@ -194,6 +196,20 @@ func playGame() {
             }
             
             displayBoard(board: board)
+
+            if checkWin(board: board, letter: "X") == true {
+                print("Congratulations! Player 1 won! 😏")
+                playAgain()
+                running = false
+            } else if checkWin(board: board, letter: "O") == true {
+                print("Congratulations! Player 2 won! 😏")
+                playAgain()
+                running = false
+            } else if checkWin(board: board, letter: "X") == false && checkWin(board: board, letter: "O") == false && isBoardEmpty(board: board) == false {
+                print("It's a tie! Maybe next time 😏")
+                playAgain()
+                running = false
+            }
             
         } else {
             print("Player 2, please select a move from 1-9:")
@@ -211,22 +227,22 @@ func playGame() {
             } else {
                 clearScreen()
             }
-        
-        displayBoard(board: board)
-        
-        if checkWin(board: board, letter: "X") == true {
-            print("Congratulations! Player 1 won! 😏")
-            playAgain()
-            running = false
-        } else if checkWin(board: board, letter: "O") == true {
-            print("Congratulations! Player 2 won! 😏")
-            playAgain()
-            running = false
-        } else if checkWin(board: board, letter: "X") == false && checkWin(board: board, letter: "O") == false && isBoardEmpty(board: board) == false {
-            print("It's a tie! Maybe next time 😏")
-            playAgain()
-            running = false
-        }
+            
+            displayBoard(board: board)
+            
+            if checkWin(board: board, letter: "X") == true {
+                print("Congratulations! Player 1 won! 😏")
+                playAgain()
+                running = false
+            } else if checkWin(board: board, letter: "O") == true {
+                print("Congratulations! Player 2 won! 😏")
+                playAgain()
+                running = false
+            } else if checkWin(board: board, letter: "X") == false && checkWin(board: board, letter: "O") == false && isBoardEmpty(board: board) == false {
+                print("It's a tie! Maybe next time 😏")
+                playAgain()
+                running = false
+            }
         }
     }
 }
