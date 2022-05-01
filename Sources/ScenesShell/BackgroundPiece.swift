@@ -18,7 +18,7 @@ class BackgroundPiece: RenderableEntity {
         case blueX
         case redX
     }
-
+    
     static let urls: Dictionary<Piece, URL> = {
         let rootURL = URL(string: "https://www.codermerlin.com/users/anton-bily/images")!
         
@@ -53,6 +53,10 @@ class BackgroundPiece: RenderableEntity {
         topLeft = Point(x: Int.random(in: 0 ..< canvasSize.width),
                         y: Int.random(in: 0 ..< canvasSize.height))
     }
+
+    override func boundingRect() -> Rect {
+        return Rect(topLeft: topLeft, size: imageSize)
+    }
     
     override func calculate(canvasSize: Size) {
         image.renderMode = .destinationPoint(topLeft)
@@ -64,10 +68,18 @@ class BackgroundPiece: RenderableEntity {
         let rotate = Transform(rotateRadians:currentRadians)
         let postTranslate = Transform(translate:DoublePoint(-targetCenter))
         setTransforms(transforms:[preTranslate, rotate, postTranslate])
-
+        
         if topLeft.x > canvasSize.width {
             topLeft.x = -imageSize.width
         }
+
+        let imageBoundingRect = boundingRect()
+        let containment = pngBoundingRect.containment(target: imageBoundingRect)
+        
+        if !containment.intersection([.overlapsRight, .beyondRihgt, .overlapsLeft, .beyondLeft]).isempty {
+            topLeft.x *= -1
+        }
+        
     }
     
     override func render(canvas: Canvas) {
