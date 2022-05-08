@@ -65,16 +65,16 @@ func minimax(board: inout [String], depth: Int, maximum: Bool) -> Int {
     }
 }
 
-//Creates possible AI moves by putting it through 
+//Gets AI move by using the minimax algorithm
 func aiMove(board: inout [String]) -> Int {
-    var bestScore = -1000 //bestScore is declared
+    var bestScore = -1000
     var winningMove = 0
-    for i in 0 ..< board.count {
-        if board[i] == " " {
+    for i in 0 ..< board.count { //Cycles through every spot on the board                                        
+        if board[i] == " " { //Only checks through empty spots
             board[i] = "O"
             let moveScore = minimax(board: &board, depth: 0, maximum: false)
             board[i] = " "
-            if moveScore > bestScore {
+            if moveScore > bestScore { //If moveScore from i spot is higher than bestScore, bestScore is redeclared to moveScore, winningMove is declared to be the i spot, cycling through each possible spot.
                 winningMove = i
                 bestScore = moveScore
             }
@@ -83,7 +83,7 @@ func aiMove(board: inout [String]) -> Int {
     return winningMove
 }
 
-func playAgain() -> Void {
+func playAgain() -> Void { //Prompts player choose whether to play again or not, returns true or false depending on response.
     print("Would you like to play again? [Y]es or [N]o.")
     let again = readLine()!.uppercased()
     if again.prefix(1) == "Y" {
@@ -96,15 +96,15 @@ func playAgain() -> Void {
     }
 }
 
-func clearScreen() {
+func clearScreen() { //Clears screen
     print("\n", terminator: Array(repeating: "\n", count: 99).joined())
 }
 
 func playerMove(board: inout [String], position: String, turn: inout Bool) {
-    if 1...9 ~= Int(position)! {
+    if 1...9 ~= Int(position)! { //Forces string of position into an integer, and determines whether it falls between 1 through 9
         if board[Int(position)! - 1] == " " {
-            if turn == false {
-                board[Int(position)! - 1] = "X"
+            if turn == false { //Depending on turn, places X or O into position if position is empty
+                board[Int(position)! - 1] = "X" 
                 turn = true
             } else {
                 board[Int(position)! - 1] = "O"
@@ -112,22 +112,22 @@ func playerMove(board: inout [String], position: String, turn: inout Bool) {
             }
             clearScreen()
             print("Your Turn:")
-        } else {
+        } else { //if position is taken, prompts the player to select an open spot.
             clearScreen()
             print("That spot has already been taken! Please select an open spot.")
         }
-    } else {
+    } else { //Clears screen if unwrapping fails.
         clearScreen()
     }
 }
 
-func checkWinCycle(board: [String], running: inout Bool, multiplayer: Bool) {
-    if checkWin(board: board, letter: "X") == true {
+func checkWinCycle(board: [String], running: inout Bool, multiplayer: Bool) { //Checks for win by Player 1 or 2, or a tie.
+    if checkWin(board: board, letter: "X") == true { //Runs checkWin for player 1
         print("Congratulations! You won!")
         playAgain()
         running = false
-    } else if checkWin(board: board, letter: "O") == true {
-        if multiplayer == false {
+    } else if checkWin(board: board, letter: "O") == true { //Runs checkwin for player 2/AI
+        if multiplayer == false { //Determines whether multiplayer or singleplayer
             print("Unfortunately, the AI won. Maybe next time 😏")
         } else {
             print("Congratulations! Player O won!")
@@ -135,14 +135,14 @@ func checkWinCycle(board: [String], running: inout Bool, multiplayer: Bool) {
         playAgain()
         running = false
     } else if checkWin(board: board, letter: "X") == false
-                && checkWin(board: board, letter: "O") == false && isBoardEmpty(board: board) == false {
+                && checkWin(board: board, letter: "O") == false && isBoardEmpty(board: board) == false { //Checks for possible tie
         print("It's a tie! Maybe next time 😏")
         playAgain()
         running = false
     }
 }
 
-func gameMode(multiplayer: inout Bool) {
+func gameMode(multiplayer: inout Bool) { //Prompts the player into selecting a gamemode, makes multiplayer true or false depending on player response
     print("[S]ingleplayer or [M]ultiplayer?)")
     let multiplayerResponse = readLine()!.uppercased()
     if multiplayerResponse == "M" {
@@ -154,7 +154,7 @@ func gameMode(multiplayer: inout Bool) {
     }
 }
 
-func printStart() {
+func printStart() { //Prints start menu.
     print("********* [ WELCOME TO TIC-TAC-TOE GAME ] *********")
     print("*                                                 *")
     print("*         INFO: PLAYER 1 (X), PLAYER 2 (O)        *")
@@ -170,46 +170,46 @@ func printStart() {
     print("***************************************************")
 }
 
-func playGame() {
+func playGame() { //Main function that compiles all different functions together into one.
     var board : [String] = [" ", " ", " ",
                             " ", " ", " ",
-                            " ", " ", " "]
-    var turn : Bool = false
-    var running : Bool = true
+                            " ", " ", " "] //Declares board into a one-dimensional 3x3 array of strings.
+    var turn : Bool = false //Declares turn variable, turn false = player 1, turn true = player 2/AI
+    var running : Bool = true 
     var multiplayer : Bool = false
     
     clearScreen()
     printStart()
-    gameMode(multiplayer: &multiplayer)
+    gameMode(multiplayer: &multiplayer) //Prompts player into selecting gameMode
     
     // Singleplayer
-    while (isBoardEmpty(board: board) == true) && (running == true) && (multiplayer == false) {
-        if turn == false {
+    while (isBoardEmpty(board: board) == true) && (running == true) && (multiplayer == false) { //Runs if player chooses singleplayer and board is empty.
+        if turn == false { //Prompts player 1 into selecting a move
             print("Please select a move from 1-9:")
-            let position = readLine()!
+            let position = readLine()! //Declares position to be player response
             playerMove(board: &board, position: position, turn: &turn)
         } else {
-            let position = aiMove(board: &board)
-            board[position] = "O"
-            turn = false
-            print("AI's Turn: ")
+            let position = aiMove(board: &board) //Declares position to be the AI move
+            board[position] = "O" //Places O into best AI move.
+            turn = false //Makes turn = false to switch turns
+            print("AI's Turn: ") 
         }
         
-        displayBoard(board: board)
-        checkWinCycle(board: board, running: &running, multiplayer: multiplayer)
+        displayBoard(board: board) //calls displayBoard to print board.
+        checkWinCycle(board: board, running: &running, multiplayer: multiplayer) //Checks if any player has won or if a tie has occurred.
     }
 
     // Multiplayer
-    while (isBoardEmpty(board: board) == true) && (running == true) && (multiplayer == true) {
-        if turn == false {
+    while (isBoardEmpty(board: board) == true) && (running == true) && (multiplayer == true) { //Runs if player chooses multiplayer and board is empty
+        if turn == false { //Player 1s move
             print("Player 1, please select a move from 1-9:")
-            let position = readLine()!
+            let position = readLine()! //Declares player response to be position
             playerMove(board: &board, position: position, turn: &turn)
             displayBoard(board: board)
             checkWinCycle(board: board, running: &running, multiplayer: multiplayer)
         } else {
             print("Player 2, please select a move from 1-9:")
-            let position = readLine()!
+            let position = readLine()! //Declares player response to be position
             playerMove(board: &board, position: position, turn: &turn)
             displayBoard(board: board)
             checkWinCycle(board: board, running: &running, multiplayer: multiplayer)
@@ -217,4 +217,4 @@ func playGame() {
     }
 }
 
-playGame()
+playGame() //invokes playGame
