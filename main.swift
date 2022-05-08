@@ -20,17 +20,6 @@ func isBoardEmpty(board: [String]) -> Bool {
     return false
 }
 
-//Checks if a board spot is empty by checking whether the string in its place is blank or not.
-func emptySpot(board: [String]) -> Int {
-    var count : Int = 0
-    for i in 0 ..< board.count {
-        if board[i] ==  " " {
-            count += 1
-        }
-    }
-    return count
-}
-
 //Checks for possible victories by checking every possible way to win.
 func checkWin(board: [String], letter: String) -> Bool {
     return ((board[0] == letter && board[1] == letter && board[2] == letter) || // Check 1st row
@@ -43,35 +32,32 @@ func checkWin(board: [String], letter: String) -> Bool {
               (board[0] == letter && board[4] == letter && board[8] == letter)) // Check upper left to lower right diagonal
 }
 
-//Utilizes a minimax algorithm
-func minimax(board: [String], depth: Int, maximum: Bool) -> Int {
-    var board = board // Redeclare 'board' to make it a mutable variable
-    if checkWin(board: board, letter: "O") {
+//Utilizes a minimax algorithm to get the best possible move for the AI
+func minimax(board: inout [String], depth: Int, maximum: Bool) -> Int {
+    if checkWin(board: board, letter: "O") { //If any possible spot results in an AI victory, a max value of 10 is returned.
         return 10
-    } else if checkWin(board: board, letter: "X") {
+    } else if checkWin(board: board, letter: "X") { //If any possible spot results in a player victory, a min value of 10 is returned.
         return -10
-    } else if isBoardEmpty(board: board) == false {
+    } else if isBoardEmpty(board: board) == false { //If board is empty, a neutral value of 0 is returned.
         return 0
     }
     
-    if maximum == true {
+    if maximum == true { //When maximum == true, the lowest value/'maxxing' will be returned
         var best : Int = -1000
-        for i in 0 ..< board.count {
+        for i in 0 ..< board.count { //Cycles through all board spots with potential moves to determine lowest value/maximum
             if board[i] == " " {
                 board[i] = "O"
-                //let maximum = false
-                best = max(best, minimax(board: board, depth: depth + 1, maximum: false))
+                best = max(best, minimax(board: &board, depth: depth + 1, maximum: false)) //Determines value for each position and keeps the lowest value.
                 board[i] = " "
             }
         }
         return best + depth
-    } else {
+    } else {  //The highest value/'minning' will be returned to avoid a player victory
         var worst = 1000
         for i in 0 ..< board.count {
             if board[i] == " " {
                 board[i] = "X"
-                //let maximum = true
-                worst = min(worst, minimax(board: board, depth: depth + 1, maximum: true))
+                worst = min(worst, minimax(board: &board, depth: depth + 1, maximum: true)) //Cycles through all board spots to determine highest value/minimum
                 board[i] = " "
             }
         }
@@ -80,14 +66,13 @@ func minimax(board: [String], depth: Int, maximum: Bool) -> Int {
 }
 
 //Creates possible AI moves by putting it through 
-func aiMove(board: [String]) -> Int {
-    var board = board // Redeclare 'board' to make it a mutable variable
-    var bestScore = -1000
+func aiMove(board: inout [String]) -> Int {
+    var bestScore = -1000 //bestScore is declared
     var winningMove = 0
     for i in 0 ..< board.count {
         if board[i] == " " {
             board[i] = "O"
-            let moveScore = minimax(board: board, depth: 0, maximum: false)
+            let moveScore = minimax(board: &board, depth: 0, maximum: false)
             board[i] = " "
             if moveScore > bestScore {
                 winningMove = i
@@ -97,6 +82,7 @@ func aiMove(board: [String]) -> Int {
     }
     return winningMove
 }
+
 func playAgain() -> Void {
     print("Would you like to play again? [Y]es or [N]o.")
     let again = readLine()!.uppercased()
@@ -109,6 +95,7 @@ func playAgain() -> Void {
         playAgain()
     }
 }
+
 func clearScreen() {
     print("\n", terminator: Array(repeating: "\n", count: 99).joined())
 }
@@ -147,7 +134,8 @@ func checkWinCycle(board: [String], running: inout Bool, multiplayer: Bool) {
         }
         playAgain()
         running = false
-    } else if checkWin(board: board, letter: "X") == false && checkWin(board: board, letter: "O") == false && isBoardEmpty(board: board) == false {
+    } else if checkWin(board: board, letter: "X") == false
+                && checkWin(board: board, letter: "O") == false && isBoardEmpty(board: board) == false {
         print("It's a tie! Maybe next time 😏")
         playAgain()
         running = false
@@ -201,7 +189,7 @@ func playGame() {
             let position = readLine()!
             playerMove(board: &board, position: position, turn: &turn)
         } else {
-            let position = aiMove(board: board)
+            let position = aiMove(board: &board)
             board[position] = "O"
             turn = false
             print("AI's Turn: ")
