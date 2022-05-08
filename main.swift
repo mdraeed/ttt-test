@@ -1,3 +1,5 @@
+
+//Prints board and a representation of it in numbers
 func displayBoard(board: [String]) {
     print()
     print("\(board[0]) | \(board[1]) | \(board[2])             1 | 2 | 3")
@@ -7,6 +9,8 @@ func displayBoard(board: [String]) {
     print("\(board[6]) | \(board[7]) | \(board[8])             7 | 8 | 9 ")
     print()
 }
+
+//Checks if the entire board is empty by checking each and every board spot
 func isBoardEmpty(board: [String]) -> Bool {
     for i in 0 ..< board.count {
         if board[i] == " " {
@@ -15,6 +19,8 @@ func isBoardEmpty(board: [String]) -> Bool {
     }
     return false
 }
+
+//Checks if a board spot is empty by checking whether the string in its place is blank or not.
 func emptySpot(board: [String]) -> Int {
     var count : Int = 0
     for i in 0 ..< board.count {
@@ -24,6 +30,8 @@ func emptySpot(board: [String]) -> Int {
     }
     return count
 }
+
+//Checks for possible victories by checking every possible way to win.
 func checkWin(board: [String], letter: String) -> Bool {
     return ((board[0] == letter && board[1] == letter && board[2] == letter) || // Check 1st row
               (board[3] == letter && board[4] == letter && board[5] == letter) || // Check 2nd row
@@ -34,6 +42,8 @@ func checkWin(board: [String], letter: String) -> Bool {
               (board[6] == letter && board[4] == letter && board[2] == letter) || // Check lower left to upper right diagonal
               (board[0] == letter && board[4] == letter && board[8] == letter)) // Check upper left to lower right diagonal
 }
+
+//Utilizes a minimax algorithm
 func minimax(board: [String], depth: Int, maximum: Bool) -> Int {
     var board = board // Redeclare 'board' to make it a mutable variable
     if checkWin(board: board, letter: "O") {
@@ -68,6 +78,8 @@ func minimax(board: [String], depth: Int, maximum: Bool) -> Int {
         return worst - depth
     }
 }
+
+//Creates possible AI moves by putting it through 
 func aiMove(board: [String]) -> Int {
     var board = board // Redeclare 'board' to make it a mutable variable
     var bestScore = -1000
